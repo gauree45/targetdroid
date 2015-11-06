@@ -1,0 +1,15 @@
+
+
+when adding a new repository to the to git
+1.Create a repository online
+2. Navigate to the folder and give the following commands
+	git init
+	git add <name of the file>
+	git commit -m "message"
+	git remote add origin <URL>
+	git push -u origin master
+3.Everytime you change the files give following commands
+	git add <filename>
+	git commit -m "message"
+	git push
+	
