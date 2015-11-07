@@ -1,0 +1,101 @@
+#########################################
+###### Author Guillermo Suarez de Tangil ######
+##### guillermo.suarez.tangil at uc3m.es ######
+#######################################
+
+###########################################
+# Usage: regular expression: emulator command  #
+# Description: associates a logcat event to an          #
+#                     emulator command.                          #
+# See: adb logcat -b event http://developer.android.com/tools/debugging/debugging-log.html
+# See: emulator commands http://developer.android.com/tools/devices/emulator.html#console
+########################################
+
+
+
+############### ----------------------------------------------------
+#### Battery #### ----------------------------------------------------
+############### ----------------------------------------------------
+#AC: online        #
+# status: Full      #
+# health: Good   #
+# present: true   #
+# capacity: 50    #
+##############
+
+I/battery_status[\w\W\d\s]*\[1,\d*,\d*,\d*\,[\w\W]*\]: power status unknown
+I/battery_status[\w\W\d\s]*\[2,\d*,\d*,\d*\,[\w\W]*\]: power status charging
+I/battery_status[\w\W\d\s]*\[3,\d*,\d*,\d*\,[\w\W]*\]: power status discharging
+I/battery_status[\w\W\d\s]*\[4,\d*,\d*,\d*\,[\w\W]*\]: power status not-charging
+I/battery_status[\w\W\d\s]*\[5,\d*,\d*,\d*\,[\w\W]*\]: power status full
+
+I/battery_status[\w\W\d\s]*\[\d*,1,\d*,\d*,[\w\W]*\]:  power health unknown
+I/battery_status[\w\W\d\s]*\[\d*,2,\d*,\d*,[\w\W]*\]:  power health good
+I/battery_status[\w\W\d\s]*\[\d*,3,\d*,\d*,[\w\W]*\]:  power health overheat
+I/battery_status[\w\W\d\s]*\[\d*,4,\d*,\d*,[\w\W]*\]:  power health dead
+I/battery_status[\w\W\d\s]*\[\d*,5,\d*,\d*,[\w\W]*\]:  power health overvoltage
+I/battery_status[\w\W\d\s]*\[\d*,6,\d*,\d*,[\w\W]*\]:  power health failure
+
+I/battery_status[\w\W\d\s]*\[\d*,\d*,0,\d*,[\w\W]*\]: power present false
+I/battery_status[\w\W\d\s]*\[\d*,\d*,1,\d*,[\w\W]*\]: power present true
+
+I/battery_status[\w\W\d\s]*\[\d*,\d*,\d*,0,[\w\W]*\]: power ac off
+I/battery_status[\w\W\d\s]*\[\d*,\d*,\d*,1,[\w\W]*\]: power ac on
+
+#I/battery_level[\w\W\d\s]: power capacity * 
+
+############### ----------------------------------------------------
+####   SMS   #### ----------------------------------------------------
+############### ----------------------------------------------------
+
+I/am_create_service[\s\W\w\d\D]*,com\.android\.mms/\.transaction\.SmsReceiverService,act=android\.provider\.Telephony\.SMS_RECEIVED,[\s\W\w\d\D]*: sms send *
+
+
+############### ----------------------------------------------------
+####   CALL   ### ----------------------------------------------------
+############## ----------------------------------------------------
+
+I/am_create_activity[\s\W\w\d\D]*,com\.android\.phone/\.InCallScreen,android\.intent\.action\.MAIN,[\s\W\w\d\D]*: gsm call *
+
+##################### ----------------------------------------------------
+#### Accelerometer ####  ----------------------------------------------------
+####################   ----------------------------------------------------
+# acceleration: enabled.#
+# magnetic-field: enabled.
+# orientation: enabled.  #
+# temperature: enabled#
+# proximity: enabled.    #
+####################
+
+# ToDo: 
+#sensor set acceleration 0:9.7
+#sensor set magnetic-field 0:0:0
+#sensor set orientation 0:0:0
+#sensor set temperature 0:0:0
+#sensor set proximity 1:0:0
+
+
+################  ----------------------------------------------------
+#### Location ####  ----------------------------------------------------
+###############   ----------------------------------------------------
+
+# Service,act=com.google.android.location.internal.GMM_NLP,1015]
+# I/location_controller(  300): 6
+# I/location_controller(  300): 4
+# I/binder_sample(  969): [android.location.ILocationManager,1,255,com.google.android.apps.maps,51]
+# I/binder_sample(  969): [android.location.ILocationManager,1,11,com.google.android.apps.maps,2]
+# I/binder_sample(  969): [android.location.ILocationManager,1,33,com.google.android.apps.maps,6]
+# I/binder_sample(  969): [android.location.ILocationManager,1,17,com.google.android.apps.maps,3]
+# I/binder_sample(  969): [android.location.ILocationManager,1,6,com.google.android.apps.maps,1]
+# I/binder_sample(  969): [android.location.ILocationManager,1,11,com.google.android.apps.maps,2]
+# I/binder_sample(  969): [android.location.ILocationManager,1,9,com.google.android.apps.maps,1]
+# I/binder_sample(  969): [android.location.ILocationManager,1,55,com.google.android.apps.maps,11]
+# I/binder_sample(  969): [android.location.ILocationManager,1,6,com.google.android.apps.maps,1]
+# I/binder_sample(  969): [android.location.ILocationManager,1,11,com.google.android.apps.maps,2]
+# I/binder_sample(  969): [android.location.ILocationManager,1,24,com.google.android.apps.maps,4]
+
+
+# ToDo:
+#geo fix 40.416301 -3.696626
+
+

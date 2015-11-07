@@ -1,0 +1,15 @@
+################################################################################
+# (c) 2013, COmputer SEcurity (COSEC) - Universidad Carlos III de Madrid
+# Author: Guillermo Suarez de Tangil - guillermo.suarez.tangil@uc3m.es
+################################################################################
+
+class Event(object):
+    def __init__(self, event):
+	self.type = ''
+	self.event = event
+	print self.event
+	#dict([(name, cls) for name, cls in self.__dict__.items() if isinstance(cls, type)])
+	for name, cls in self.__dict__.items():
+	    print name.type
+
+

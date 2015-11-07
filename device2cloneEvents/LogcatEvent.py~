@@ -1,0 +1,158 @@
+################################################################################
+# (c) 2013, COmputer SEcurity (COSEC) - Universidad Carlos III de Madrid
+# Author: Guillermo Suarez de Tangil - guillermo.suarez.tangil@uc3m.es
+################################################################################
+
+import sys, os, shutil, tempfile
+
+from subprocess import Popen, call, PIPE
+from shlex import split
+
+# ------------------
+
+class Event(object):
+    def __init__(self, event):
+	self.event_type = None
+	self.event_raw = event
+
+    def __parse__(self):
+	if self.event_type != None:
+	    return
+	elements = self.event_raw.split(': ')
+	event = str(self.event_raw).split('(')[0][2:]
+	self.event_type = str(event)	
+	return elements	
+
+    def get_event_handler(self, deviceId):
+	elements = self.__parse__()
+	try:
+	    klass = getattr(sys.modules[__name__], self.event_type)
+	    return klass(deviceId, elements)
+	except AttributeError:
+	    raise EventNotSupportedByCloud('Event not supported by clone: ' + self.event_type)
+
+# ------------------
+
+class EventNotSupportedByCloud(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+# ------------------
+
+class RunnerEvent():
+    def __init__(self, deviceId, elements):
+	self.deviceId = deviceId
+	self.elements = elements
+	self.endline = "\n"
+	self.torun = "clone = MonkeyRunner.waitForConnection(deviceId='" + self.deviceId + "')" + self.endline
+
+    def event_type(self):
+	return self.__class__.__name__
+
+    def clone_call(self):
+	#pipe = Popen(split(self.torun), stdout=PIPE, shell=True)
+	clonerunner_src = os.path.join(os.getcwd(), 'clonerunner.py')
+	clonerunner_dst = os.path.join(os.getcwd(), 'gen_clonerunner')
+	try:
+	    os.makedirs(clonerunner_dst)
+	except OSError:
+	    pass
+	clonerunner_file = tempfile.mktemp(prefix=self.event_type() + '_', suffix='.py', dir=clonerunner_dst)
+	shutil.copyfile(clonerunner_src, clonerunner_file)
+	clonerunner = open(clonerunner_file, 'a')
+	clonerunner.write(self.torun)
+	clonerunner.close()
+	call(['monkeyrunner', clonerunner_file], stderr=PIPE)
+	#os.remove(clonerunner_file)
+
+# ------------------
+# %%%%%%%%%%%%%%%%%%
+
+class ActivityManager(RunnerEvent):
+    """
+    Inputs: Package and Activity
+    Running: 'Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.android.launcher/.CustomShirtcutActivity }'
+    Running: 'Starting: Intent { dat=file:///mnt/sdcard/SinMachismoSi.apk cmp=com.android.packageinstaller/.InstallAppProgress (has extras) } from pid 785'
+    Running: 'Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 pkg=es.booooo.sms cmp=es.booooo.sms/.SinMachismoSi } from pid 785'
+    """
+    def clone_run(self):
+	# inputs (activity/.package)
+	###### package = "com.android.launcher"
+	###### activity = ".CustomShirtcutActivity"
+	###### action = "com.android.launcher.action.launcheraction"
+	#print self.elements
+	action = ''
+	categories = ''			
+	package = ''
+	activity = ''
+	data = ''
+	for element in self.elements:
+	    #print " -----> " + element
+	    params=''
+	    if "launcheraction" in element:
+		intent=str(str(element.split("}")[0]).split("{")[1])
+		for arg in intent.split():
+		    pair=arg.split("=")
+		    if len(pair) != 2:
+			continue
+		    key=pair[0]
+		    val=pair[1]
+		    if "act" in key:
+			action=val
+		    if "cat" in key:
+			categories=val
+		    if "cmp" in key:
+			pair=val.split("/")
+			package=pair[0]
+			activity=pair[1]
+		self.torun += "runAction = '" + action + "'" + self.endline
+		self.torun += "runCategories = '" + categories + "'" + self.endline
+		self.torun += "runComponent = '" + package + "/" + activity + "'" + self.endline
+		self.torun += "clone.startActivity(action=runAction, component=runComponent, categories=runCategories)" + self.endline
+	    elif "com.android.packageinstaller" and "file:///" in element:
+		intent=str(str(element.split("}")[0]).split("{")[1])
+		for arg in intent.split():
+		    pair=arg.split("=")
+		    if len(pair) != 2:
+			continue
+		    key=pair[0]
+		    val=pair[1]
+		    if "dat" in key:
+			data=val
+		    if "cmp" in key:
+			pair=val.split("/")
+			package=pair[0]
+			activity=pair[1]
+		#self.torun += "runComponent = '" + package + "/" + activity + "'" + self.endline
+		#self.torun += "runData = '" + data + "'" + self.endline
+		#self.torun += "clone.startActivity(action=runAction, data=runData)" + self.endline
+		self.torun += "clone.installPackage('/home/guillermo/Dropbox/SinMachismoSi/SinMachismoSi.apk')"
+	    else:
+		continue
+	#print self.torun
+		    
+	# script to run
+	print self.torun 
+	self.clone_call()
+
+# %%%%%%%%%%%%%%%%%%
+
+# %%%%%%%%%%%%%%%%%%
+
+# %%%%%%%%%%%%%%%%%%
+
+class Template(RunnerEvent):
+    """
+    Inputs:
+    Running: ''
+    """
+    def clone_run():
+	# inputs ()
+	
+	# script to run
+	self.torun += "" + self.endline
+	self.clone_call()
+    
+

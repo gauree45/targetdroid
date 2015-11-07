@@ -1,0 +1,9 @@
+--------- beginning of /dev/log/main
+D/CAPTUREVENTS( 7367): TAGSMS | OUTGOING SMS | number: 123 | body: Hii
+I/battery_status( 7367):  [2,2,1,0,Li-ion]
+D/CAPTUREVENTS( 7367): TAGBATTERY | LEVEL:95 | PLUGGED:0 | STATUS:2
+I/battery_status( 7367):  [2,2,1,0,Li-ion]
+D/CAPTUREVENTS( 7367): TAGBATTERY | LEVEL:95 | PLUGGED:0 | STATUS:2
+I/battery_status( 7367):  [2,2,1,0,Li-ion]
+D/CAPTUREVENTS( 7367): TAGSMS | OUTGOING SMS | number: 123 | body: Hii
+I/battery_status( 7367):  [2,2,1,0,Li-ion]

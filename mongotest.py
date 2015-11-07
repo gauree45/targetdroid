@@ -1,10 +1,8 @@
 __author__ = 'adminuser'
 
-import mongo_markov
+from markov2 import mongo_markov
 
-
-
-connect=mongo_markov.MarkovChain()
+connect= mongo_markov.MarkovChain()
 connect.insert('power_on','power_off',1234,'battery')
 connect.insert('power_off','power_on',1234,'battery')
 connect.insert('power_on','power_on',1234,'battery')
